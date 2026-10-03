@@ -1,0 +1,20 @@
+services:
+  claude-code:
+    build: .
+    container_name: claude-code
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+    environment:
+      - TZ=Australia/Melbourne
+      - CLAUDE_SESSION_NAME=chewbacca-claude
+      - CLAUDE_PERMISSION_MODE=acceptEdits
+      - GIT_USER_NAME=adz80
+      - GIT_USER_EMAIL=adamboyce.home@gmail.com
+    volumes:
+      - claude-config:/home/developer/.claude
+      - claude-workspace:/workspace
+
+volumes:
+  claude-config:
+  claude-workspace:
