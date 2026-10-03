@@ -1,10 +1,26 @@
 services:
   claude-code:
-    build: .
+    image: claude-code:latest
+    pull_policy: never
     container_name: claude-code
     restart: unless-stopped
     tty: true
     stdin_open: true
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        CRED_FILE="/home/developer/.claude/.credentials.json"
+        while true; do
+          if [ -f "$$CRED_FILE" ] && [ -s "$$CRED_FILE" ]; then
+            echo "[startup] Credentials found. Starting Remote Control..."
+            claude remote-control --permission-mode acceptEdits --name chewbacca-claude
+            echo "[startup] Remote Control exited. Restarting in 60s..."
+            sleep 60
+          else
+            echo "[startup] No credentials. Exec in and run: claude auth login"
+            sleep infinity
+          fi
+        done
     environment:
       - TZ=Australia/Melbourne
       - CLAUDE_SESSION_NAME=chewbacca-claude
